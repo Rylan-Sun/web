@@ -1,26 +1,264 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>知识库</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>SmartKB - 个人知识库</title>
+    <style>
+        /* 基础重置和字体设置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* 整体布局 */
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-item {
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin: 4px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #37352f;
+            transition: all 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background: #f1f1f1;
+        }
+
+        .sidebar-item.active {
+            background: #f1f1f1;
+            font-weight: 500;
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            max-width: 1200px;
+        }
+
+        /* 搜索栏 */
+        .search-bar {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0,122,255,0.1);
+            outline: none;
+        }
+
+        /* 知识卡片 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 160px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #37352f;
+        }
+
+        .card-content {
+            color: #5f5f5f;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 操作按钮 */
+        .floating-button {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background: #007AFF;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,122,255,0.3);
+            transition: all 0.3s;
+        }
+
+        .floating-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,122,255,0.4);
+        }
+
+        /* 拖拽样式 */
+        .dragging {
+            opacity: 0.5;
+            transform: rotate(3deg);
+        }
+
+        .dropzone {
+            border: 2px dashed #007AFF;
+            background: rgba(0,122,255,0.05);
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>个人知识库</h1>
-        </header>
-        <main>
-            <div class="knowledge-grid">
-                <div class="knowledge-item" onclick="goToKnowledge('知识1')">MACHINE LEARNING</div>
-                <div class="knowledge-item" onclick="goToKnowledge('知识2')">COMPUTER VISION</div>
-                <div class="knowledge-item" onclick="goToKnowledge('知识3')">知识单元 3</div>
-                <!-- 添加更多知识单元 -->
-            </div>
-        </main>
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>SmartKB</h2>
+        </div>
+        <div class="sidebar-item active">
+            <span>🏠 个人知识库</span>
+        </div>
+        <div class="sidebar-item">
+            <span>📚 我的文档</span>
+        </div>
+        <div class="sidebar-item">
+            <span>📂 分类管理</span>
+        </div>
+        <div class="sidebar-item">
+            <span>⭐ 收藏夹</span>
+        </div>
+        <div class="sidebar-item">
+            <span>⚙️ 设置</span>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="搜索知识库...">
+        </div>
+
+        <!-- 知识卡片网格 -->
+        <div class="card-grid">
+            <div class="card" draggable="true">
+                <div class="card-title">欢迎使用 SmartKB</div>
+                <div class="card-content">点击右下角 + 号创建新卡片，拖拽卡片进行排序，点击卡片进行编辑。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建按钮 -->
+    <div class="floating-button">+</div>
+
+    <script>
+        // 卡片拖拽功能
+        let draggedItem = null;
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('dragstart', () => {
+                card.classList.add('dragging');
+                draggedItem = card;
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                draggedItem = null;
+            });
+        });
+
+        document.querySelector('.card-grid').addEventListener('dragover', e => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(e.clientY);
+            const grid = document.querySelector('.card-grid');
+            if (afterElement == null) {
+                grid.appendChild(draggedItem);
+            } else {
+                grid.insertBefore(draggedItem, afterElement);
+            }
+        });
+
+        function getDragAfterElement(y) {
+            return [...document.querySelectorAll('.card:not(.dragging)')]
+                .reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    return offset < 0 && offset > closest.offset ? 
+                        { offset: offset, element: child } : closest;
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // 新建卡片功能
+        document.querySelector('.floating-button').addEventListener('click', () => {
+            const newCard = document.createElement('div');
+            newCard.className = 'card';
+            newCard.draggable = true;
+            newCard.innerHTML = `
+                <div class="card-title">新知识卡片</div>
+                <div class="card-content">点击编辑内容...</div>
+            `;
+            document.querySelector('.card-grid').prepend(newCard);
+            
+            // 为新卡片添加拖拽事件
+            newCard.addEventListener('dragstart', () => {
+                newCard.classList.add('dragging');
+                draggedItem = newCard;
+            });
+        });
+
+        // 侧边栏交互
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelector('.sidebar-item.active')?.classList.remove('active');
+                item.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
