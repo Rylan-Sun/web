@@ -22,19 +22,19 @@
                 <i class="fas fa-search"></i>
             </div>
             <nav class="nav-menu">
-                <div class="nav-item">
+                <div class="nav-item active" data-tab="notes">
                     <i class="fas fa-book"></i>
                     <span>📚 学习笔记</span>
                 </div>
-                <div class="nav-item">
+                <div class="nav-item" data-tab="programming">
                     <i class="fas fa-code"></i>
                     <span>💻 编程技术</span>
                 </div>
-                <div class="nav-item">
+                <div class="nav-item" data-tab="ideas">
                     <i class="fas fa-lightbulb"></i>
                     <span>💡 想法收集</span>
                 </div>
-                <div class="nav-item">
+                <div class="nav-item" data-tab="todos">
                     <i class="fas fa-tasks"></i>
                     <span>✅ 待办事项</span>
                 </div>
@@ -44,7 +44,7 @@
         <!-- 主要内容区 -->
         <main class="main-content">
             <div class="page-header">
-                <h1>欢迎来到我的知识库</h1>
+                <h1>我的知识库</h1>
                 <div class="header-actions">
                     <button class="action-btn">
                         <i class="fas fa-plus"></i> 新建页面
@@ -52,47 +52,85 @@
                 </div>
             </div>
             
-            <div class="content-blocks">
-                <!-- 笔记块 -->
+            <!-- 学习笔记选项卡 -->
+            <div class="tab-content active" id="notes">
                 <div class="block">
                     <div class="block-header">
                         <i class="fas fa-grip-lines"></i>
-                        <h2>📝 最近笔记</h2>
+                        <h2>📝 最近学习笔记</h2>
                     </div>
                     <div class="block-content">
-                        <p>这是一个 Notion 风格的个人知识库模板。你可以：</p>
+                        <p>这是学习笔记区域，你可以：</p>
                         <ul>
-                            <li>✍️ 记录学习笔记</li>
-                            <li>📋 整理待办事项</li>
-                            <li>💭 收集灵感想法</li>
-                            <li>🔍 快速搜索内容</li>
+                            <li>✍️ 记录每日学习内容</li>
+                            <li>📋 整理学习要点</li>
+                            <li>💭 总结学习心得</li>
+                            <li>🔍 复习重要知识</li>
                         </ul>
                     </div>
                 </div>
+            </div>
 
-                <!-- 代码块 -->
+            <!-- 编程技术选项卡 -->
+            <div class="tab-content" id="programming">
                 <div class="block code-block">
                     <div class="block-header">
                         <i class="fas fa-grip-lines"></i>
-                        <h2>💻 代码示例</h2>
+                        <h2>💻 代码笔记</h2>
                     </div>
                     <div class="block-content">
-                        <pre><code>function hello() {
-    console.log("Welcome to my knowledge base!");
-}</code></pre>
+                        <pre><code>// JavaScript 示例代码
+function greeting(name) {
+    return `Hello, ${name}!`;
+}
+
+// Python 示例代码
+def calculate_sum(numbers):
+    return sum(numbers)</code></pre>
                     </div>
                 </div>
+            </div>
 
-                <!-- 引用块 -->
-                <div class="block quote-block">
+            <!-- 想法收集选项卡 -->
+            <div class="tab-content" id="ideas">
+                <div class="block">
                     <div class="block-header">
                         <i class="fas fa-grip-lines"></i>
-                        <h2>💭 今日思考</h2>
+                        <h2>💡 创意灵感</h2>
                     </div>
                     <div class="block-content">
-                        <blockquote>
-                            知识就是力量。持续学习，保持好奇心。
-                        </blockquote>
+                        <div class="idea-item">
+                            <h3>项目想法</h3>
+                            <p>开发一个智能任务管理系统</p>
+                        </div>
+                        <div class="idea-item">
+                            <h3>学习计划</h3>
+                            <p>深入学习人工智能和机器学习</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 待办事项选项卡 -->
+            <div class="tab-content" id="todos">
+                <div class="block">
+                    <div class="block-header">
+                        <i class="fas fa-grip-lines"></i>
+                        <h2>✅ 任务清单</h2>
+                    </div>
+                    <div class="block-content">
+                        <div class="todo-item">
+                            <input type="checkbox" id="task1">
+                            <label for="task1">完成项目文档</label>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" id="task2">
+                            <label for="task2">学习新技术</label>
+                        </div>
+                        <div class="todo-item">
+                            <input type="checkbox" id="task3">
+                            <label for="task3">准备技术分享</label>
+                        </div>
                     </div>
                 </div>
             </div>
