@@ -1,265 +1,178 @@
 <!DOCTYPE html>
- <html lang="zh-CN">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Sheeran - 个人知识库</title>
-     <style>
-         /* 基础重置和字体设置 */
-         * {
-             margin: 0;
-             padding: 0;
-             box-sizing: border-box;
-             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-         }
- 
-         /* 整体布局 */
-         body {
-             background-color: #f8f9fa;
-             min-height: 100vh;
-             display: flex;
-         }
- 
-         /* 侧边栏样式 */
-         .sidebar {
-             width: 280px;
-             background: #ffffff;
-             border-right: 1px solid #e0e0e0;
-             padding: 20px;
-             height: 100vh;
-             position: fixed;
-             transition: all 0.3s;
-         }
- 
-         .sidebar-header {
-             padding: 10px;
-             margin-bottom: 20px;
-         }
- 
-         .sidebar-item {
-             padding: 8px 12px;
-             border-radius: 5px;
-             margin: 4px 0;
-             cursor: pointer;
-             display: flex;
-             align-items: center;
-             color: #37352f;
-             transition: all 0.2s;
-         }
- 
-         .sidebar-item:hover {
-             background: #f1f1f1;
-         }
- 
-         .sidebar-item.active {
-             background: #f1f1f1;
-             font-weight: 500;
-         }
- 
-         /* 主内容区域 */
-         .main-content {
-             flex: 1;
-             margin-left: 280px;
-             padding: 40px;
-             max-width: 1200px;
-         }
- 
-         /* 搜索栏 */
-         .search-bar {
-             margin-bottom: 30px;
-         }
- 
-         .search-input {
-             width: 100%;
-             padding: 12px 20px;
-             border: 1px solid #e0e0e0;
-             border-radius: 8px;
-             font-size: 16px;
-             transition: all 0.3s;
-         }
- 
-         .search-input:focus {
-             border-color: #007AFF;
-             box-shadow: 0 0 0 2px rgba(0,122,255,0.1);
-             outline: none;
-         }
- 
-         /* 知识卡片 */
-         .card-grid {
-             display: grid;
-             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-             gap: 24px;
-         }
- 
-         .card {
-             background: white;
-             border: 1px solid #e0e0e0;
-             border-radius: 12px;
-             padding: 20px;
-             min-height: 160px;
-             transition: all 0.3s;
-             cursor: pointer;
-             position: relative;
-         }
- 
-         .card:hover {
-             transform: translateY(-2px);
-             box-shadow: 0 8px 16px rgba(0,0,0,0.08);
-         }
- 
-         .card-title {
-             font-size: 18px;
-             font-weight: 600;
-             margin-bottom: 12px;
-             color: #37352f;
-         }
- 
-         .card-content {
-             color: #5f5f5f;
-             font-size: 14px;
-             line-height: 1.6;
-         }
- 
-         /* 操作按钮 */
-         .floating-button {
-             position: fixed;
-             bottom: 40px;
-             right: 40px;
-             background: #007AFF;
-             color: white;
-             width: 56px;
-             height: 56px;
-             border-radius: 50%;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             cursor: pointer;
-             box-shadow: 0 4px 12px rgba(0,122,255,0.3);
-             transition: all 0.3s;
-         }
- 
-         .floating-button:hover {
-             transform: scale(1.05);
-             box-shadow: 0 6px 16px rgba(0,122,255,0.4);
-         }
- 
-         /* 拖拽样式 */
-         .dragging {
-             opacity: 0.5;
-             transform: rotate(3deg);
-         }
- 
-         .dropzone {
-             border: 2px dashed #007AFF;
-             background: rgba(0,122,255,0.05);
-         }
-     </style>
- </head>
- <body>
-     <!-- 侧边栏 -->
-     <div class="sidebar">
-         <div class="sidebar-header">
-             <h2>Sheeran</h2>
-         </div>
-         <div class="sidebar-item active">
-             <span>🏠 个人知识库</span>
-         </div>
-         <div class="sidebar-item">
-             <span>📚 我的文档</span>
-         </div>
-         <div class="sidebar-item">
-             <span>📂 分类管理</span>
-         </div>
-         <div class="sidebar-item">
-             <span>⭐ 收藏夹</span>
-         </div>
-         <div class="sidebar-item">
-             <span>⚙️ 设置</span>
-         </div>
-     </div>
- 
-     <!-- 主内容区 -->
-     <div class="main-content">
-         <!-- 搜索栏 -->
-         <div class="search-bar">
-             <input type="text" class="search-input" placeholder="搜索知识库...">
-         </div>
- 
-         <!-- 知识卡片网格 -->
-         <div class="card-grid">
-             <div class="card" draggable="true">
-                 <div class="card-title">欢迎使用 SmartKB</div>
-                 <div class="card-title">Rylan-sun 是我的github账号</div>
-                 <div class="card-content">点击右下角 + 号创建新卡片，拖拽卡片进行排序，点击卡片进行编辑。</div>
-             </div>
-         </div>
-     </div>
- 
-     <!-- 新建按钮 -->
-     <div class="floating-button">+</div>
- 
-     <script>
-         // 卡片拖拽功能
-         let draggedItem = null;
- 
-         document.querySelectorAll('.card').forEach(card => {
-             card.addEventListener('dragstart', () => {
-                 card.classList.add('dragging');
-                 draggedItem = card;
-             });
- 
-             card.addEventListener('dragend', () => {
-                 card.classList.remove('dragging');
-                 draggedItem = null;
-             });
-         });
- 
-         document.querySelector('.card-grid').addEventListener('dragover', e => {
-             e.preventDefault();
-             const afterElement = getDragAfterElement(e.clientY);
-             const grid = document.querySelector('.card-grid');
-             if (afterElement == null) {
-                 grid.appendChild(draggedItem);
-             } else {
-                 grid.insertBefore(draggedItem, afterElement);
-             }
-         });
- 
-         function getDragAfterElement(y) {
-             return [...document.querySelectorAll('.card:not(.dragging)')]
-                 .reduce((closest, child) => {
-                     const box = child.getBoundingClientRect();
-                     const offset = y - box.top - box.height / 2;
-                     return offset < 0 && offset > closest.offset ? 
-                         { offset: offset, element: child } : closest;
-                 }, { offset: Number.NEGATIVE_INFINITY }).element;
-         }
- 
-         // 新建卡片功能
-         document.querySelector('.floating-button').addEventListener('click', () => {
-             const newCard = document.createElement('div');
-             newCard.className = 'card';
-             newCard.draggable = true;
-             newCard.innerHTML = `
-                 <div class="card-title">新知识卡片</div>
-                 <div class="card-content">点击编辑内容...</div>
-             `;
-             document.querySelector('.card-grid').prepend(newCard);
- 
-             // 为新卡片添加拖拽事件
-             newCard.addEventListener('dragstart', () => {
-                 newCard.classList.add('dragging');
-                 draggedItem = newCard;
-             });
-         });
- 
-         // 侧边栏交互
-         document.querySelectorAll('.sidebar-item').forEach(item => {
-             item.addEventListener('click', () => {
-                 document.querySelector('.sidebar-item.active')?.classList.remove('active');
-                 item.classList.add('active');
-             });
-         });
-     </script>
- </body>
- </html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheeran - 个人知识库</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme">
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Sheeran</h2>
+            <button id="theme-toggle" class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="搜索知识库...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-item active" data-view="home">
+                <i class="fas fa-home"></i>
+                <span>🏠 个人知识库</span>
+            </div>
+            <div class="sidebar-item" data-view="docs">
+                <i class="fas fa-book"></i>
+                <span>📚 我的文档</span>
+            </div>
+            <div class="sidebar-item" data-view="categories">
+                <i class="fas fa-folder"></i>
+                <span>📂 分类管理</span>
+            </div>
+            <div class="sidebar-item" data-view="favorites">
+                <i class="fas fa-star"></i>
+                <span>⭐ 收藏夹</span>
+            </div>
+            <div class="sidebar-item" data-view="settings">
+                <i class="fas fa-cog"></i>
+                <span>⚙️ 设置</span>
+            </div>
+        </div>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <img src="https://avatars.githubusercontent.com/u/your-username" alt="Profile" class="avatar">
+                <span>Rylan-sun</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 顶部导航 -->
+        <nav class="top-nav">
+            <div class="breadcrumb">
+                <span>个人知识库</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>最近文档</span>
+            </div>
+            <div class="view-options">
+                <button class="view-btn active" data-view="grid">
+                    <i class="fas fa-th-large"></i>
+                </button>
+                <button class="view-btn" data-view="list">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 知识卡片网格 -->
+        <div class="card-grid" id="cardContainer">
+            <!-- 快速创建卡片 -->
+            <div class="card quick-add">
+                <div class="quick-add-content">
+                    <i class="fas fa-plus"></i>
+                    <span>快速创建</span>
+                </div>
+            </div>
+
+            <!-- 示例卡片 -->
+            <div class="card" draggable="true">
+                <div class="card-header">
+                    <div class="card-icon">📝</div>
+                    <div class="card-actions">
+                        <button class="card-action-btn favorite">
+                            <i class="far fa-star"></i>
+                        </button>
+                        <button class="card-action-btn more">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-title">欢迎使用知识库</div>
+                <div class="card-content">这是一个现代化的个人知识管理系统，支持拖拽排序、主题切换等功能。</div>
+                <div class="card-footer">
+                    <div class="card-tags">
+                        <span class="tag">入门指南</span>
+                        <span class="tag">教程</span>
+                    </div>
+                    <div class="card-meta">
+                        <span class="date">2024-03-14</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右键菜单 -->
+    <div class="context-menu" id="contextMenu">
+        <div class="menu-item">
+            <i class="fas fa-edit"></i>
+            <span>编辑</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-star"></i>
+            <span>收藏</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-tags"></i>
+            <span>添加标签</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-folder-plus"></i>
+            <span>移动到...</span>
+        </div>
+        <div class="menu-item delete">
+            <i class="fas fa-trash-alt"></i>
+            <span>删除</span>
+        </div>
+    </div>
+
+    <!-- 新建卡片对话框 -->
+    <div class="modal" id="newCardModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新建卡片</h3>
+                <button class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" class="form-input" id="cardTitle" placeholder="输入卡片标题">
+                </div>
+                <div class="form-group">
+                    <label>内容</label>
+                    <textarea class="form-input" id="cardContent" placeholder="输入卡片内容"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>标签</label>
+                    <div class="tag-input">
+                        <input type="text" placeholder="输入标签，按回车添加">
+                        <div class="tag-suggestions">
+                            <span class="tag-suggestion">笔记</span>
+                            <span class="tag-suggestion">教程</span>
+                            <span class="tag-suggestion">想法</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" id="cancelBtn">取消</button>
+                <button class="btn primary" id="saveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮按钮 -->
+    <button class="floating-button" id="addButton">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+</html> 
